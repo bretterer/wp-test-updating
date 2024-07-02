@@ -4,6 +4,9 @@ on:
   release:
     types: [published]
 
+permissions:
+      contents: write
+
 jobs:
   create_zip_and_update_info:
     runs-on: ubuntu-latest
