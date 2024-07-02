@@ -1,0 +1,44 @@
+name: Release Zip and Update Info
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  create_zip_and_update_info:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Create Release Zip
+        run: |
+          zip -r release.zip . -x ".github/*" ".vscode/*" ".git/*"
+
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: release.zip
+          asset_name: release-${{ github.event.release.tag_name }}.zip
+          asset_content_type: application/zip
+
+      - name: Get Release Asset Download URL
+        id: get_download_url
+        run: |
+          download_url=$(curl -sH "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "${{ github.event.release.assets_url }}" | jq -r '.[0].browser_download_url')
+          echo "download_url=$download_url" >> $GITHUB_OUTPUT
+
+      - name: Update Info.json
+        run: |
+          jq --arg version "${{ github.event.release.tag_name }}" --arg download_url "${{ steps.get_download_url.outputs.download_url }}" '.version = $version | .download_url = $download_url' info.json > info.json.tmp
+          mv info.json.tmp info.json
+
+      - name: Deploy to gh-pages
+        uses: JamesIves/github-pages-deploy-action@v4.4.0
+        with:
+          branch: gh-pages
+          folder: .
