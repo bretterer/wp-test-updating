@@ -32,7 +32,7 @@ if (!class_exists('CustomPluginUpdateChecker')) {
             if (false === $remote || !$this->cache_allowed) {
 
                 $remote = wp_remote_get(
-                    'https://bretterer.github.io/wp-test-updating/plugin-wp-test-updating.json',
+                    'https://raw.githubusercontent.com/bretterer/wp-test-updating/gh-pages/info.json',
                     array(
                         'timeout' => 10,
                         'headers' => array(
