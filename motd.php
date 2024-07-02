@@ -2,9 +2,9 @@
 /*
 Plugin Name: MOTD
 Plugin URI: https://github.com/bretterer/wp-test-updating
-Description: Just a test plugin
+Description: Lets see if this works now.  This is just a test!
 Author: Brian Retterer
-Version: 0.1.3
+Version: 0.1.4
 Author URI: https://bretterer.com
 */
 
