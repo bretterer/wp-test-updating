@@ -4,7 +4,7 @@ Plugin Name: MOTD
 Plugin URI: https://github.com/bretterer/wp-test-updating
 Description: Just a test plugin
 Author: Brian Retterer
-Version: 0.1.0
+Version: 0.1.1
 Author URI: https://bretterer.com
 */
 
