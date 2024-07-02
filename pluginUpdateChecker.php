@@ -131,7 +131,7 @@ if (!class_exists('CustomPluginUpdateChecker')) {
             ) {
                 $res = new stdClass();
                 $res->slug = $this->plugin_slug;
-                $res->plugin = $remote->plugin_entry; // misha-update-plugin/misha-update-plugin.php
+                $res->plugin = $remote->plugin_entry;
                 $res->new_version = $remote->version;
                 $res->tested = $remote->tested;
                 $res->package = $remote->download_url;
