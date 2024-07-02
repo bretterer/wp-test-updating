@@ -15,7 +15,7 @@
     "sections": {
         "description": "Just a testing plugin for updating from github",
         "installation": "Click the activate button and that's it.",
-        "changelog": "<h4>v0.1.0 released on July 1st, 2024</h><ul><li>Initial Release</li></ul>"
+        "changelog": ""
     },
     "banners": {
         "low": "https://wpfreighter.com/images/wp-freighter-banner-772x250.webp",

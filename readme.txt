@@ -1,6 +1,6 @@
 === Message of the Day ===
 Contributors: Brian Retterer
-Stable tag: 0.1.0
+Stable tag: 0.1.1
 Tested up to: 6.4
 Requires at least: 4.6
 
