@@ -16,7 +16,7 @@ if (!class_exists('CustomPluginUpdateChecker')) {
 
 
             $this->plugin_slug = plugin_basename(__DIR__);
-            $this->version = '0.1.3';
+            $this->version = '0.1.7';
             $this->cache_key = 'bretterer_custom_update';
             $this->cache_allowed = false;
 
