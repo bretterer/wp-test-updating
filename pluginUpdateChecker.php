@@ -14,9 +14,10 @@ if (!class_exists('CustomPluginUpdateChecker')) {
         public function __construct()
         {
 
+
             $this->plugin_slug = plugin_basename(__DIR__);
-            $this->version = '0.1.0';
-            $this->cache_key = 'misha_custom_upd';
+            $this->version = '0.1.3';
+            $this->cache_key = 'bretterer_custom_update';
             $this->cache_allowed = false;
 
             add_filter('plugins_api', array($this, 'info'), 20, 3);
@@ -27,9 +28,9 @@ if (!class_exists('CustomPluginUpdateChecker')) {
         public function request()
         {
 
-            $remote = get_transient($this->cache_key);
+            // $remote = get_transient($this->cache_key);
 
-            if (false === $remote || !$this->cache_allowed) {
+            // if (false === $remote || !$this->cache_allowed) {
 
                 $remote = wp_remote_get(
                     'https://raw.githubusercontent.com/bretterer/wp-test-updating/gh-pages/info.json',
@@ -46,11 +47,12 @@ if (!class_exists('CustomPluginUpdateChecker')) {
                     || 200 !== wp_remote_retrieve_response_code($remote)
                     || empty(wp_remote_retrieve_body($remote))
                 ) {
+
                     return false;
                 }
 
-                set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
-            }
+                // set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
+            // }
 
             $remote = json_decode(wp_remote_retrieve_body($remote));
 
@@ -60,8 +62,8 @@ if (!class_exists('CustomPluginUpdateChecker')) {
         function info($res, $action, $args)
         {
 
-            // print_r( $action );
-            // print_r( $args );
+            // var_dump( $action );
+            // var_dump( $args );
 
             // do nothing if you're not getting plugin information right now
             if ('plugin_information' !== $action) {
@@ -75,6 +77,8 @@ if (!class_exists('CustomPluginUpdateChecker')) {
 
             // get updates
             $remote = $this->request();
+
+
 
             if (!$remote) {
                 return $res;
@@ -127,13 +131,14 @@ if (!class_exists('CustomPluginUpdateChecker')) {
             ) {
                 $res = new stdClass();
                 $res->slug = $this->plugin_slug;
-                $res->plugin = plugin_basename(__FILE__); // misha-update-plugin/misha-update-plugin.php
+                $res->plugin = $remote->plugin_entry; // misha-update-plugin/misha-update-plugin.php
                 $res->new_version = $remote->version;
                 $res->tested = $remote->tested;
                 $res->package = $remote->download_url;
 
                 $transient->response[$res->plugin] = $res;
             }
+
 
             return $transient;
         }
