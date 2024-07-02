@@ -6,7 +6,7 @@
     "donate_link": "https://github.com/sponsors/bretterer",
     "version": "x.x.x",
     "download_url": "xxxx",
-    "plugin_entry": "MOTD/motd.php",
+    "plugin_entry": "motd/motd.php",
     "requires": "4.6",
     "tested": "6.5",
     "requires_php": "5.6",
