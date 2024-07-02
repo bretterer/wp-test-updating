@@ -39,9 +39,9 @@ jobs:
       - name: Update Info.json
         run: |
           jq --arg version "${{ github.event.release.tag_name }}" \
-              --arg download_url "${{ steps.get_download_url.outputs.download_url }}" \
+              --arg download_url "${{ steps.get_download_url.outputs.download_url }}" '
             .version = $version |
-            .download_url = $download_url |
+            .download_url = $download_url
           ' info.json > info.json.tmp
           mv info.json.tmp info.json
 
