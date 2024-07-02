@@ -35,13 +35,6 @@ jobs:
           download_url=$(curl -sH "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "${{ github.event.release.assets_url }}" | jq -r '.[0].browser_download_url')
           echo "download_url=$download_url" >> $GITHUB_OUTPUT
 
-      - name: Fetch All Release Notes
-        id: fetch_all_release_notes
-        run: |
-          all_release_notes=$(curl -sH "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "${{ github.event.repository.releases_url }}" | jq -r '[.[] | {date: .created_at, notes: .body}] | reverse') # Get all releases, format, and reverse for newest first
-          echo "all_release_notes=$all_release_notes" >> $GITHUB_OUTPUT
-
-
 
       - name: Update Info.json
         run: |
