@@ -6,7 +6,7 @@
   "donate_link": "https://github.com/sponsors/bretterer",
   "version": "0.1.6",
   "download_url": "https://github.com/bretterer/wp-test-updating/releases/download/0.1.6/MOTD.zip",
-  "plugin_entry": "MOTD/motd.php",
+  "plugin_entry": "motd/motd.php",
   "requires": "4.6",
   "tested": "6.5",
   "requires_php": "5.6",
