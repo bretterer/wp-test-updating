@@ -2,38 +2,51 @@
 
 defined('ABSPATH') || exit;
 
-if (!class_exists('CustomPluginUpdateChecker')) {
-    class CustomPluginUpdateChecker
+if (!class_exists('GithubPluginUpdater')) {
+    class GithubPluginUpdater
     {
-
-        public $plugin_slug;
-        public $version;
-        public $cache_key;
+        public $repo = null;
+        public $plugin_slug = false;
+        public $version = false;
+        public $cache_key = 'github_plugin_updater';
         public $cache_allowed;
 
-        public function __construct()
+        public function __construct( string $repo, bool $allowCache = true )
         {
 
-
-            $this->plugin_slug = plugin_basename(__DIR__);
-            $this->version = '0.1.7';
-            $this->cache_key = 'bretterer_custom_update';
-            $this->cache_allowed = false;
+            $this->cache_allowed = $allowCache;
+            $this->repo = $repo;
 
             add_filter('plugins_api', array($this, 'info'), 20, 3);
             add_filter('site_transient_update_plugins', array($this, 'update'));
             add_action('upgrader_process_complete', array($this, 'purge'), 10, 2);
         }
 
+        public function set_plugin_information() {
+
+            $plugin_data = get_plugins();
+
+            foreach ($plugin_data as $plugin_file => $data) {
+                if (strpos($plugin_file, basename(__DIR__)) !== false) {
+                    $this->plugin_slug = $plugin_file;
+                    $this->version = $data['Version'];
+                    $this->cache_key = 'github_plugin_updater_'.$plugin_file;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public function request()
         {
 
-            // $remote = get_transient($this->cache_key);
+            $remote = get_transient($this->cache_key);
 
-            // if (false === $remote || !$this->cache_allowed) {
+            if (false === $remote || !$this->cache_allowed) {
 
                 $remote = wp_remote_get(
-                    'https://raw.githubusercontent.com/bretterer/wp-test-updating/gh-pages/info.json',
+                    'https://raw.githubusercontent.com/'.$this->repo.'/gh-pages/info.json',
                     array(
                         'timeout' => 10,
                         'headers' => array(
@@ -51,8 +64,8 @@ if (!class_exists('CustomPluginUpdateChecker')) {
                     return false;
                 }
 
-                // set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
-            // }
+                set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
+            }
 
             $remote = json_decode(wp_remote_retrieve_body($remote));
 
@@ -62,11 +75,14 @@ if (!class_exists('CustomPluginUpdateChecker')) {
         function info($res, $action, $args)
         {
 
-            // var_dump( $action );
-            // var_dump( $args );
-
             // do nothing if you're not getting plugin information right now
             if ('plugin_information' !== $action) {
+                return $res;
+            }
+
+            $pluginInfo = $this->set_plugin_information();
+
+            if(false === $pluginInfo) {
                 return $res;
             }
 
@@ -116,12 +132,22 @@ if (!class_exists('CustomPluginUpdateChecker')) {
 
         public function update($transient)
         {
+            // return $transient;
 
             if (empty($transient->checked)) {
                 return $transient;
             }
 
+            $pluginInfo = $this->set_plugin_information();
+
+            if(false === $pluginInfo) {
+                return $transient;
+            }
+
+
+
             $remote = $this->request();
+
 
             if (
                 $remote
@@ -131,7 +157,7 @@ if (!class_exists('CustomPluginUpdateChecker')) {
             ) {
                 $res = new stdClass();
                 $res->slug = $this->plugin_slug;
-                $res->plugin = $remote->plugin_entry;
+                $res->plugin = $this->plugin_slug;
                 $res->new_version = $remote->version;
                 $res->tested = $remote->tested;
                 $res->package = $remote->download_url;
@@ -157,5 +183,4 @@ if (!class_exists('CustomPluginUpdateChecker')) {
 		}
     }
 
-    new CustomPluginUpdateChecker();
 }

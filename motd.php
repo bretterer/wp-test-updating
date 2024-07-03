@@ -8,7 +8,8 @@ Version: 0.1.7
 Author URI: https://bretterer.com
 */
 
-include __DIR__."/pluginUpdateChecker.php";
+include __DIR__."/githubPluginUpdater.php";
+new GithubPluginUpdater('bretterer/wp-test-updating');
 
 function motd_message() {
     $messages = [
